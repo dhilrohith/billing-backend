@@ -140,30 +140,43 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
   <meta charset="utf-8">
   <title>Tax Invoice</title>
   <style>
+    @media screen {
+      .invoice-box {
+        width: 210mm;
+        margin: 24px auto;   /* CENTER in browser */
+        background: white;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        padding: 20px;
+        font-family: "Segoe UI", "Noto Sans", Arial, Helvetica, sans-serif;
+      }
+    }
     /* =================== PAGE & SIZING (A4) =================== */
-    @page {
-      size: A4;             /* 210mm x 297mm */
-      margin: 10mm 12mm;         /* control final printable area here */
-    }
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 210mm;
-      min-height: 297mm;
-      font-family: Arial, Helvetica, sans-serif;
-      color: #333;
-      -webkit-print-color-adjust: exact !important;
-      print-color-adjust: exact !important;
-    }
+    @media print {
+      @page {
+        size: A4;             /* 210mm x 297mm */
+        margin: 10mm 12mm;         /* control final printable area here */
+      }
+        
+      html, body {
+        margin: 0;
+        padding: 0;
+        width: 210mm;
+        min-height: 297mm;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #333;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
 
-    /* Printable */
-    .invoice-box {
-      width: 100%;
-      height: auto;
-      margin: 0 auto;
-      padding: 0;
-      box-sizing: border-box;
-      overflow: hidden;           /* avoid accidental spill */
+      /* Printable */
+      .invoice-box {
+        width: 100%;
+        height: auto;
+        margin: 0 auto;
+        padding: 0;
+        box-sizing: border-box;
+        overflow: hidden;           /* avoid accidental spill */
+      }
     }
 
     /* =================== TYPOGRAPHY & SPACING =================== */

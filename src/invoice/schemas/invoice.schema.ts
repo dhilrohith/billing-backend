@@ -2,22 +2,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { BillType } from '../enums/bill-type.enum'
+import { TSHIRT_SIZES } from 'src/common/constants/tshirtSizes';
+import type { TshirtSize } from 'src/common/constants/tshirtSizes';
 
 export type InvoiceDocument = Invoice & Document;
 
 export enum UnitType {
   PCS = 'PCS',          // Pieces
   PERCENTAGE = '%',     // Percentage
-}
-
-export enum TshirtSize{
-  S = 'S',
-  M = 'M',
-  L = 'L',
-  XL = 'XL',
-  XXL = '2XL',
-  XXXL = '3XL',
-  XXXXL = '4XL',
 }
 
 export enum TshirtColor{
@@ -30,7 +22,7 @@ export enum TshirtColor{
 
 @Schema({_id: false})
 class SizeQuantity {
-  @Prop({ required: true, enum: Object.values(TshirtSize)})
+  @Prop({ type: String, required: true, enum: TSHIRT_SIZES})
   size: TshirtSize;
 
   @Prop({ required: true, min:0 })
@@ -39,8 +31,11 @@ class SizeQuantity {
 
 @Schema({_id: false})
 class ColorBreakDown {
-  @Prop({ required: true, enum: Object.values(TshirtColor) })
-  color: TshirtColor;
+  @Prop({ required: false, enum: Object.values(TshirtColor) })
+  color?: TshirtColor;
+
+  @Prop({ type: String, required: false, trim: true,})
+  customColor?: string;
 
   @Prop({ type: [SizeQuantity], required: true })
   sizes: SizeQuantity[];

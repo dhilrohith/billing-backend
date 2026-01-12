@@ -29,6 +29,7 @@ import { EmailService } from '../email/email.service';
 import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
 import { Invoice } from './schemas/invoice.schema';
+import { generateInvoiceHTML } from 'src/pdf/templates/invoice-pdf.template';
 
 @Controller('invoice')
 export class InvoiceController {
@@ -40,7 +41,7 @@ export class InvoiceController {
 
   // Create new invoice
   @ApiTags('Invoices')
-  @Post()
+  @Post('create')
   @ApiOperation({ summary: 'Create a new invoice' })
   @ApiBody({ type: CreateInvoiceDto })
   @ApiResponse({
@@ -90,6 +91,20 @@ export class InvoiceController {
     };
   }
 
+  @Get(':id/preview')
+  async previewInvoice(
+    @Param('id') id: string,
+    @Res() res: Response,
+  ) {
+    const invoice = await this.invoiceService.findOne(id);
+
+    const html = generateInvoiceHTML(invoice);
+
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
+  }
+
+
   // Generate and download PDF
   @Get(':id/pdf')
   @ApiOperation({ summary: 'Download invoice PDF' })
@@ -115,18 +130,19 @@ export class InvoiceController {
     status: 500,
     description: 'Error generating PDF',
   })
-  async downloadPDF(@Param('id') id: string, @Res({ passthrough: true }) res: Response,): Promise<Buffer> {
+  async downloadPDF(@Param('id') id: string, @Res() res: Response,): Promise<void> {
     try {
       const invoice = await this.invoiceService.findOne(id);
       const pdfBuffer = await this.pdfService.generatePDF(invoice);
 
-      res.set({
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename=Invoice_${invoice.invoiceNumber}.pdf`,
-        'Content-Length': pdfBuffer.length,
-      });
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename=Invoice_${invoice.invoiceNumber}.pdf`,
+      );
+      res.setHeader('Content-Length', pdfBuffer.length);
 
-      return pdfBuffer;
+      res.end(pdfBuffer);
     } catch (error:unknown) {
       const message = error instanceof Error ? error.message : 'Unexpected error';
       throw new HttpException(

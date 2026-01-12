@@ -8,12 +8,18 @@ import {
   ValidateNested, 
   IsOptional, 
   IsEnum, 
-  IsInt
+  IsInt,
+  IsIn,
+  MinLength,
+  Validate
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TshirtColor, TshirtSize, UnitType } from '../schemas/invoice.schema';
+import { TshirtColor, UnitType } from '../schemas/invoice.schema';
 import { BillType } from '../enums/bill-type.enum';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { TSHIRT_SIZES } from 'src/common/constants/tshirtSizes';
+import type { TshirtSize } from 'src/common/constants/tshirtSizes';
+import { ColorRequiredValidator } from '../validators/color-required.validator';
 
 export class QuantityDto {
   @ApiProperty({ example: 100 })
@@ -26,8 +32,8 @@ export class QuantityDto {
 }
 
 export class SizeQuantityDto {
-  @ApiProperty({ enum: TshirtSize, example: TshirtSize.M })
-  @IsEnum(TshirtSize)
+  @ApiProperty({ enum: TSHIRT_SIZES, example: 'M' })
+  @IsIn(TSHIRT_SIZES)
   size: TshirtSize;
 
   @ApiProperty({ example: 10 })
@@ -36,9 +42,19 @@ export class SizeQuantityDto {
 }
 
 export class ColorBreakDownDto {
-  @ApiProperty({ enum: TshirtColor, example: TshirtColor.R_BLUE })
+  @ApiPropertyOptional({ enum: TshirtColor, example: TshirtColor.R_BLUE, description: 'Predefined t-shirt color', })
+  @IsOptional()
   @IsEnum(TshirtColor)
-  color: TshirtColor;
+  color?: TshirtColor;
+
+  @ApiPropertyOptional({
+    example: 'Maroon',
+    description: 'Custom color if not selecting predefined color',
+  })
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  customColor?: string;
 
   @ApiProperty({ type: [SizeQuantityDto] })
   @ValidateNested({ each: true })
@@ -48,6 +64,9 @@ export class ColorBreakDownDto {
   @ApiProperty({ example: 25 })
   @IsInt()
   totalQuantity: number;
+
+  @Validate(ColorRequiredValidator, [['color', 'customColor']])
+  _colorCheck: true;
 }
 
 export class DescriptionDetailsDto {

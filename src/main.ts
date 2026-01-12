@@ -10,7 +10,7 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     credentials: true,
   });
 
@@ -20,7 +20,7 @@ async function bootstrap(): Promise<void> {
     transform: true,
   }));
 
-    // 🔇 Swagger + ESLint compatibility block
+  // 🔇 Swagger + ESLint compatibility block
   /* eslint-disable @typescript-eslint/no-unsafe-call */
   /* eslint-disable @typescript-eslint/no-unsafe-member-access */
   /* eslint-disable @typescript-eslint/no-unsafe-assignment */
