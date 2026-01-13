@@ -13,18 +13,7 @@ async function bootstrap(): Promise<void> {
     : [];
 
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow server-to-server calls, health checks, Swagger, etc.
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(null, false);
-    },
+    origin: allowedOrigins,
     credentials: false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
