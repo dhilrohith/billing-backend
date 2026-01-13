@@ -25,7 +25,7 @@ async function bootstrap(): Promise<void> {
 
       return callback(null, false);
     },
-    credentials: true,
+    credentials: false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
