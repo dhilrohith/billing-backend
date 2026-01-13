@@ -1,10 +1,7 @@
-# -------- Base image --------
 FROM node:18-slim
 
-# -------- Install system deps for Puppeteer --------
+# Install system deps for Puppeteer
 RUN apt-get update && apt-get install -y \
-  wget \
-  gnupg \
   ca-certificates \
   fonts-liberation \
   libasound2 \
@@ -19,30 +16,24 @@ RUN apt-get update && apt-get install -y \
   libxcomposite1 \
   libxdamage1 \
   libxrandr2 \
+  libxkbcommon0 \
+  libpangocairo-1.0-0 \
+  libpango-1.0-0 \
+  libgtk-3-0 \
   xdg-utils \
-  --no-install-recommends && rm -rf /var/lib/apt/lists/*
+  --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
-# -------- Set workdir --------
 WORKDIR /app
 
-# -------- Copy package files --------
 COPY package*.json ./
+RUN npm install
 
-# -------- Install dependencies --------
-RUN npm install --production=false
-
-# -------- Copy source --------
 COPY . .
-
-# -------- Build NestJS --------
 RUN npm run build
 
-# -------- Expose port --------
 EXPOSE 3000
 
-# -------- Puppeteer env --------
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV NODE_ENV=production
 
-# -------- Start app --------
 CMD ["node", "dist/main.js"]
