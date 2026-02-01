@@ -81,10 +81,10 @@ export class DescriptionDetailsDto {
 }
 
 export class InvoiceItemDto {
-  @ApiProperty({ type: [DescriptionDetailsDto] })
-  @ValidateNested({ each: true })
+  @ApiProperty({ type: DescriptionDetailsDto })
+  @ValidateNested()
   @Type(() => DescriptionDetailsDto)
-  description: DescriptionDetailsDto[];
+  description: DescriptionDetailsDto;
 
   @ApiProperty({ example: '6109' })
   @IsString()
@@ -191,4 +191,19 @@ export class CreateInvoiceDto {
   @ValidateNested({ each: true })
   @Type(() => InvoiceItemDto)
   items: InvoiceItemDto[];
+
+  @ApiPropertyOptional({ example: 'Payment due within 30 days' })
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @ApiPropertyOptional({ example: 'Goods once sold cannot be returned' })
+  @IsOptional()
+  @IsString()
+  termsAndConditions?: string;
+
+  @ApiPropertyOptional({ example: 'UPI' })
+  @IsOptional()
+  @IsString()
+  paymentMode?: string;
 }

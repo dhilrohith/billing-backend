@@ -28,7 +28,7 @@ export const descriptionHTML = (desc: DescriptionDetails): string => { return`
 
   ${desc.colorBreakDown.map(color => `
     <div style="margin-top: 1mm;">
-      <strong>${color.color}:</strong>
+      <strong>${color.color || color.customColor}:</strong>
       ${color.sizes
         .map(s => `${s.size}-${s.quantity}`)
         .join(', ')
@@ -176,6 +176,18 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
         padding: 0;
         box-sizing: border-box;
         overflow: hidden;           /* avoid accidental spill */
+        position: relative;
+      }
+      .print-footer {
+        display: block;
+        position: fixed;
+        bottom: 5mm;          /* dead bottom of page */
+        left: 0;
+        right: 0;
+        text-align: center;
+        font-size: 10px;
+        color: #666;
+        z-index: 1000;
       }
     }
 
@@ -443,6 +455,9 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
       font-weight: bold;
       align-self: flex-end;
     }
+    .print-footer {
+      display: none;
+    }
     /* =================== PRINT SAFEGUARDS =================== */
     @media print {
       .invoice-box { overflow: hidden; }
@@ -577,6 +592,9 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
         <img src="${signBase64}" alt="Signature">
         <p class="role-text">Proprietor</p>
       </div>
+    </div>
+    <div class="print-footer">
+      This invoice was computer generated
     </div>
   </div>
 </body>

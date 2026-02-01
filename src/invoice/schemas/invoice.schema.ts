@@ -18,6 +18,7 @@ export enum TshirtColor{
   GREY = 'GREY',
   NAVY = 'NAVY',
   BLACK = 'BLACK',
+  WHITE = 'WHITE',
 }
 
 @Schema({_id: false})
