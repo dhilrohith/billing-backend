@@ -127,6 +127,11 @@ export class AddressDto {
 }
 
 export class CreateInvoiceDto {
+  @ApiPropertyOptional({ example: 'INV-MANUAL-001' })
+  @IsOptional()
+  @IsString()
+  invoiceNumber?: string;
+
   @ApiProperty({ enum: BillType, example: BillType.INTRA_STATE })
   @IsEnum(BillType)
   billType: BillType;

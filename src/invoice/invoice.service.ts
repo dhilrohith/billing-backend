@@ -64,7 +64,25 @@ export class InvoiceService {
 
   async create(createInvoiceDto: CreateInvoiceDto): Promise<Invoice> {
 
-    const {invoiceNumber, month, year, sequence, date} = await this.generateInvoiceNumber();
+    let invoiceNumber, month, year, sequence, date;
+
+    if (createInvoiceDto.invoiceNumber) {
+      invoiceNumber = createInvoiceDto.invoiceNumber;
+      
+      const d = new Date();
+      month = d.toLocaleString('en-US', { month: 'short' });
+      year = String(d.getFullYear()).slice(-2);
+      const day = String(d.getDate()).padStart(2, '0');
+      date = `${day}-${month}-${String(d.getFullYear())}`;
+      sequence = 0; // Default for manual
+    } else {
+      const generated = await this.generateInvoiceNumber();
+      invoiceNumber = generated.invoiceNumber;
+      month = generated.month;
+      year = generated.year;
+      sequence = generated.sequence;
+      date = generated.date;
+    }
     // 1. Calculate item amounts and subtotal
     let subtotal = 0;
     const items = createInvoiceDto.items.map((item) => {
