@@ -10,8 +10,7 @@ import {
   IsEnum, 
   IsInt,
   IsIn,
-  MinLength,
-  Validate
+  MinLength
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { TshirtColor, UnitType } from '../schemas/invoice.schema';
@@ -19,7 +18,6 @@ import { BillType } from '../enums/bill-type.enum';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { TSHIRT_SIZES } from 'src/common/constants/tshirtSizes';
 import type { TshirtSize } from 'src/common/constants/tshirtSizes';
-import { ColorRequiredValidator } from '../validators/color-required.validator';
 
 export class QuantityDto {
   @ApiProperty({ example: 100 })
@@ -64,9 +62,6 @@ export class ColorBreakDownDto {
   @ApiProperty({ example: 25 })
   @IsInt()
   totalQuantity: number;
-
-  @Validate(ColorRequiredValidator, [['color', 'customColor']])
-  _colorCheck: true;
 }
 
 export class DescriptionDetailsDto {
