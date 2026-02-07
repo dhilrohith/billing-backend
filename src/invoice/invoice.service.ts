@@ -7,6 +7,7 @@ import { CreateInvoiceDto } from './dto/create-invoice.dto';
 import { ToWords } from 'to-words';
 import { calculateGST } from '../common/utils/gst.utils';
 import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { BillType } from './enums/bill-type.enum';
 
 @Injectable()
 export class InvoiceService {
@@ -85,8 +86,10 @@ export class InvoiceService {
     }
     // 1. Calculate item amounts and subtotal
     let subtotal = 0;
-    const items = createInvoiceDto.items.map((item) => {
-      const amount = item.rate * item.quantity.billed;
+    const items = (createInvoiceDto.items || []).map((item) => {
+      const rate = item.rate || 0;
+      const billed = item.quantity?.billed || 0;
+      const amount = rate * billed;
       subtotal += amount;
       return {
         ...item,
@@ -94,7 +97,7 @@ export class InvoiceService {
       };
     });
 
-    const gst = calculateGST(subtotal, createInvoiceDto.billType);
+    const gst = calculateGST(subtotal, createInvoiceDto.billType || BillType.INTRA_STATE);
 
     // 4. Generate amount in words
     const totalInWords = this.toWords.convert(gst.finalTotal);
