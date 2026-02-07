@@ -23,17 +23,19 @@ export const imageToBase64 = (filePath: string): string => {
   }
 };
 
-export const descriptionHTML = (desc: DescriptionDetails): string => { return`
-  <strong>${desc.productName}</strong><br/>
+export const descriptionHTML = (desc?: DescriptionDetails): string => { 
+  if (!desc) return 'N/A';
+  return`
+  <strong>${desc.productName || 'N/A'}</strong><br/>
 
-  ${desc.colorBreakDown.map(color => `
+  ${(desc.colorBreakDown || []).map(color => `
     <div style="margin-top: 1mm;">
-      <strong>${color.color || color.customColor}:</strong>
-      ${color.sizes
-        .map(s => `${s.size}-${s.quantity}`)
+      <strong>${color.color || color.customColor || 'N/A'}:</strong>
+      ${(color.sizes || [])
+        .map(s => `${s.size || 'N/A'}-${s.quantity || 0}`)
         .join(', ')
       }
-      = ${color.totalQuantity} PCS
+      = ${color.totalQuantity || 0} PCS
     </div>
   `).join('')}
 `};
@@ -58,18 +60,18 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
   const signaturePath = path.join(process.cwd(), 'public', 'images', signatory.signatureImage || 'signature.jpg');
   const signBase64 = imageToBase64(signaturePath);
 
-  const itemsRows = invoice.items
+  const itemsRows = (invoice.items || [])
     .map(
       (item, index) => `
       <tr>
         <td class="c c-num">${index + 1}</td>
         <td class="c c-desc">${descriptionHTML(item.description)}</td>
-        <td class="c c-hsn">${item.hsnCode}</td>
-        <td class="c c-qty">${item.quantity.shipped}</td>
-        <td class="c c-qty">${item.quantity.billed}</td>
-        <td class="c c-unit">${item.per}</td>
-        <td class="c c-money">₹${item.rate.toFixed(2)}</td>
-        <td class="c c-money">₹${item.amount.toFixed(2)}</td>
+        <td class="c c-hsn">${item.hsnCode || 'N/A'}</td>
+        <td class="c c-qty">${item.quantity?.shipped || 0}</td>
+        <td class="c c-qty">${item.quantity?.billed || 0}</td>
+        <td class="c c-unit">${item.per || 'PCS'}</td>
+        <td class="c c-money">₹${(item.rate || 0).toFixed(2)}</td>
+        <td class="c c-money">₹${(item.amount || 0).toFixed(2)}</td>
       </tr>
     `,
     )
@@ -81,16 +83,16 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
     <div class="section">
       <div class="section-title">Consignee (Ship to)</div>
       <div class="section-content">
-        <div class="info-row"><span class="info-label">Name:</span> ${invoice.shippingName || invoice.buyerName}</div>
-        <div class="info-row"><span class="info-label">GSTIN:</span> ${invoice.shippingGstin || invoice.buyerGstin}</div>
+        <div class="info-row"><span class="info-label">Name:</span> ${invoice.shippingName || invoice.buyerName || 'N/A'}</div>
+        <div class="info-row"><span class="info-label">GSTIN:</span> ${invoice.shippingGstin || invoice.buyerGstin || 'N/A'}</div>
         <div class="info-row">
           <span class="info-label">Address:</span>
-          ${invoice.shippingAddress?.street || invoice.buyerAddress?.street || ''},
-          ${invoice.shippingAddress?.city || invoice.buyerAddress?.city || ''},
-          ${invoice.shippingAddress?.state || invoice.buyerAddress?.state || ''} -
-          ${invoice.shippingAddress?.pincode || invoice.buyerAddress?.pincode || ''}
+          ${invoice.shippingAddress?.street || invoice.buyerAddress?.street || 'N/A'},
+          ${invoice.shippingAddress?.city || invoice.buyerAddress?.city || 'N/A'},
+          ${invoice.shippingAddress?.state || invoice.buyerAddress?.state || 'N/A'} -
+          ${invoice.shippingAddress?.pincode || invoice.buyerAddress?.pincode || 'N/A'}
         </div>
-        <div class="info-row"><span class="info-label">Phone:</span> ${invoice.shippingPhone || invoice.buyerPhone || ''}</div>
+        <div class="info-row"><span class="info-label">Phone:</span> ${invoice.shippingPhone || invoice.buyerPhone || 'N/A'}</div>
         ${invoice.shippingEmail || invoice.buyerEmail ? `<div class="info-row"><span class="info-label">Email:</span> ${invoice.shippingEmail || invoice.buyerEmail || ''}</div>`: ''}
       </div>
     </div>
@@ -492,10 +494,10 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
         <div class="section">
           <div class="section-title">Buyer (Bill to)</div>
           <div class="section-content">
-            <div class="info-row"><span class="info-label">Name:</span> ${invoice.buyerName}</div>
-            <div class="info-row"><span class="info-label">GSTIN:</span> ${invoice.buyerGstin}</div>
-            <div class="info-row"><span class="info-label">Address:</span> ${invoice.buyerAddress.street}, ${invoice.buyerAddress.city}, ${invoice.buyerAddress.state} - ${invoice.buyerAddress.pincode}</div>
-            <div class="info-row"><span class="info-label">Phone:</span> ${invoice.buyerPhone}</div>
+            <div class="info-row"><span class="info-label">Name:</span> ${invoice.buyerName || 'N/A'}</div>
+            <div class="info-row"><span class="info-label">GSTIN:</span> ${invoice.buyerGstin || 'N/A'}</div>
+            <div class="info-row"><span class="info-label">Address:</span> ${invoice.buyerAddress?.street || 'N/A'}, ${invoice.buyerAddress?.city || 'N/A'}, ${invoice.buyerAddress?.state || 'N/A'} - ${invoice.buyerAddress?.pincode || 'N/A'}</div>
+            <div class="info-row"><span class="info-label">Phone:</span> ${invoice.buyerPhone || 'N/A'}</div>
             ${invoice.buyerEmail ? `<div class="info-row"><span class="info-label">Email:</span> ${invoice.buyerEmail}</div>` : ''}
           </div>
         </div>
@@ -512,7 +514,7 @@ export const generateInvoiceHTML = (invoice: Invoice): string => {
           <p><strong>Date:</strong></p>
           <p>${invoice.date}</p>
           <p><strong>Due:</strong></p>
-          <p>${new Date(invoice.dueDate).toLocaleDateString('en-IN')}</p>
+          <p>${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString('en-IN') : 'N/A'}</p>
         </div>
       </div>
     </div>
