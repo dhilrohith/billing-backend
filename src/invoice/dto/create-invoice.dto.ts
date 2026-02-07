@@ -20,23 +20,27 @@ import { TSHIRT_SIZES } from 'src/common/constants/tshirtSizes';
 import type { TshirtSize } from 'src/common/constants/tshirtSizes';
 
 export class QuantityDto {
-  @ApiProperty({ example: 100 })
+  @ApiPropertyOptional({ example: 100 })
+  @IsOptional()
   @IsNumber()
-  shipped: number;
+  shipped?: number;
 
-  @ApiProperty({ example: 95 })
+  @ApiPropertyOptional({ example: 95 })
+  @IsOptional()
   @IsNumber()
-  billed: number;
+  billed?: number;
 }
 
 export class SizeQuantityDto {
-  @ApiProperty({ enum: TSHIRT_SIZES, example: 'M' })
+  @ApiPropertyOptional({ enum: TSHIRT_SIZES, example: 'M' })
+  @IsOptional()
   @IsIn(TSHIRT_SIZES)
-  size: TshirtSize;
+  size?: TshirtSize;
 
-  @ApiProperty({ example: 10 })
+  @ApiPropertyOptional({ example: 10 })
+  @IsOptional()
   @IsInt()
-  quantity: number;
+  quantity?: number;
 }
 
 export class ColorBreakDownDto {
@@ -54,71 +58,84 @@ export class ColorBreakDownDto {
   @MinLength(2)
   customColor?: string;
 
-  @ApiProperty({ type: [SizeQuantityDto] })
+  @ApiPropertyOptional({ type: [SizeQuantityDto] })
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => SizeQuantityDto)
-  sizes: SizeQuantityDto[];
+  sizes?: SizeQuantityDto[];
 
-  @ApiProperty({ example: 25 })
+  @ApiPropertyOptional({ example: 25 })
+  @IsOptional()
   @IsInt()
-  totalQuantity: number;
+  totalQuantity?: number;
 }
 
 export class DescriptionDetailsDto {
-  @ApiProperty({ example: 'MARS COLLAR T-SHIRT' })
+  @ApiPropertyOptional({ example: 'MARS COLLAR T-SHIRT' })
+  @IsOptional()
   @IsString()
-  productName: string;
+  productName?: string;
 
-  @ApiProperty({ type: [ColorBreakDownDto] })
+  @ApiPropertyOptional({ type: [ColorBreakDownDto] })
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ColorBreakDownDto)
-  colorBreakDown: ColorBreakDownDto[];
+  colorBreakDown?: ColorBreakDownDto[];
 }
 
 export class InvoiceItemDto {
-  @ApiProperty({ type: DescriptionDetailsDto })
+  @ApiPropertyOptional({ type: DescriptionDetailsDto })
+  @IsOptional()
   @ValidateNested()
   @Type(() => DescriptionDetailsDto)
-  description: DescriptionDetailsDto;
+  description?: DescriptionDetailsDto;
 
-  @ApiProperty({ example: '6109' })
+  @ApiPropertyOptional({ example: '6109' })
+  @IsOptional()
   @IsString()
-  hsnCode: string;
+  hsnCode?: string;
 
-  @ApiProperty({ type: QuantityDto })
+  @ApiPropertyOptional({ type: QuantityDto })
+  @IsOptional()
   @ValidateNested()
   @Type(() => QuantityDto)
-  quantity: QuantityDto;
+  quantity?: QuantityDto;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: UnitType,
     example: UnitType.PCS,
     description: 'Unit type (PCS or %)',
   })
+  @IsOptional()
   @IsEnum(UnitType)
-  per: UnitType;
+  per?: UnitType;
 
-  @ApiProperty({ example: 499 })
+  @ApiPropertyOptional({ example: 499 })
+  @IsOptional()
   @IsNumber()
-  rate: number;
+  rate?: number;
 }
 
 export class AddressDto {
-  @ApiProperty({ example: '12, Gandhi Street' })
+  @ApiPropertyOptional({ example: '12, Gandhi Street' })
+  @IsOptional()
   @IsString()
-  street: string;
+  street?: string;
 
-  @ApiProperty({ example: 'Erode' })
+  @ApiPropertyOptional({ example: 'Erode' })
+  @IsOptional()
   @IsString()
-  city: string;
+  city?: string;
 
-  @ApiProperty({ example: 'Tamil Nadu' })
+  @ApiPropertyOptional({ example: 'Tamil Nadu' })
+  @IsOptional()
   @IsString()
-  state: string;
+  state?: string;
 
-  @ApiProperty({ example: '638001' })
+  @ApiPropertyOptional({ example: '638001' })
+  @IsOptional()
   @IsString()
-  pincode: string;
+  pincode?: string;
 }
 
 export class CreateInvoiceDto {
@@ -127,13 +144,15 @@ export class CreateInvoiceDto {
   @IsString()
   invoiceNumber?: string;
 
-  @ApiProperty({ enum: BillType, example: BillType.INTRA_STATE })
+  @ApiPropertyOptional({ enum: BillType, example: BillType.INTRA_STATE })
+  @IsOptional()
   @IsEnum(BillType)
-  billType: BillType;
+  billType?: BillType;
 
-  @ApiProperty({ example: '2025-01-31' })
+  @ApiPropertyOptional({ example: '2025-01-31' })
+  @IsOptional()
   @IsDateString()
-  dueDate: string;
+  dueDate?: string;
 
   // Shipping
   @ApiPropertyOptional({ example: 'XYZ Warehouse' })
@@ -163,22 +182,26 @@ export class CreateInvoiceDto {
   shippingEmail?: string;
 
   // Buyer
-  @ApiProperty({ example: 'DNS Clothing' })
+  @ApiPropertyOptional({ example: 'DNS Clothing' })
+  @IsOptional()
   @IsString()
-  buyerName: string;
+  buyerName?: string;
 
-  @ApiProperty({ example: '33ABCDE1234F1Z5' })
+  @ApiPropertyOptional({ example: '33ABCDE1234F1Z5' })
+  @IsOptional()
   @IsString()
-  buyerGstin: string;
+  buyerGstin?: string;
 
-  @ApiProperty({ type: AddressDto })
+  @ApiPropertyOptional({ type: AddressDto })
+  @IsOptional()
   @ValidateNested()
   @Type(() => AddressDto)
-  buyerAddress: AddressDto;
+  buyerAddress?: AddressDto;
 
-  @ApiProperty({ example: '+91-9876543210' })
+  @ApiPropertyOptional({ example: '+91-9876543210' })
+  @IsOptional()
   @IsString()
-  buyerPhone: string;
+  buyerPhone?: string;
 
   @ApiPropertyOptional({ example: 'buyer@email.com' })
   @IsOptional()
@@ -186,11 +209,12 @@ export class CreateInvoiceDto {
   buyerEmail?: string;
 
   // Items
-  @ApiProperty({ type: [InvoiceItemDto] })
+  @ApiPropertyOptional({ type: [InvoiceItemDto] })
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => InvoiceItemDto)
-  items: InvoiceItemDto[];
+  items?: InvoiceItemDto[];
 
   @ApiPropertyOptional({ example: 'Payment due within 30 days' })
   @IsOptional()
