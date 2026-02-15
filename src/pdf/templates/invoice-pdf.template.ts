@@ -26,16 +26,17 @@ export const imageToBase64 = (filePath: string): string => {
 export const descriptionHTML = (desc?: DescriptionDetails): string => { 
   if (!desc) return 'N/A';
   return `
-  <strong>${desc.productName || 'N/A'}</strong><br/>
+  <strong>${desc.productName || ''}</strong><br/>
 
   ${(desc.colorBreakDown || []).map(color => `
     <div style="margin-top: 1mm;">
-      <strong>${color.color || color.customColor || 'N/A'}:</strong>
+      ${(color.color || color.customColor) ? `<strong>${color.color || color.customColor}:</strong>` : ''}
       ${(color.sizes || [])
-        .map(s => `${s.size || 'N/A'}-${s.quantity || 0}`)
+        .filter(s => s.quantity && s.quantity > 0)
+        .map(s => `${s.size || ''}-${s.quantity}`)
         .join(', ')
       }
-      = ${color.totalQuantity || 0} PCS
+      ${color.totalQuantity ? `= ${color.totalQuantity} PCS` : ''}
     </div>
   `).join('')}
 `;};

@@ -12,7 +12,7 @@ import {
   IsIn,
   MinLength
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { TshirtColor, UnitType } from '../schemas/invoice.schema';
 import { BillType } from '../enums/bill-type.enum';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -39,6 +39,7 @@ export class SizeQuantityDto {
 
   @ApiPropertyOptional({ example: 10 })
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? 0 : value))
   @IsInt()
   quantity?: number;
 }
@@ -46,6 +47,7 @@ export class SizeQuantityDto {
 export class ColorBreakDownDto {
   @ApiPropertyOptional({ enum: TshirtColor, example: TshirtColor.R_BLUE, description: 'Predefined t-shirt color', })
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsEnum(TshirtColor)
   color?: TshirtColor;
 
@@ -54,6 +56,7 @@ export class ColorBreakDownDto {
     description: 'Custom color if not selecting predefined color',
   })
   @IsOptional()
+  @Transform(({ value }) => (value === '' ? undefined : value))
   @IsString()
   @MinLength(2)
   customColor?: string;
