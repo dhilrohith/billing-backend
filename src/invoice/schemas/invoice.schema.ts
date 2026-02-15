@@ -10,6 +10,7 @@ export type InvoiceDocument = Invoice & Document;
 export enum UnitType {
   PCS = 'PCS',          // Pieces
   PERCENTAGE = '%',     // Percentage
+  KGS = 'KGS',          // Kilograms
 }
 
 export enum TshirtColor{

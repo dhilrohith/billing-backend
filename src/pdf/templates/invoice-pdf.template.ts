@@ -25,7 +25,7 @@ export const imageToBase64 = (filePath: string): string => {
 
 export const descriptionHTML = (desc?: DescriptionDetails): string => { 
   if (!desc) return 'N/A';
-  return`
+  return `
   <strong>${desc.productName || 'N/A'}</strong><br/>
 
   ${(desc.colorBreakDown || []).map(color => `
@@ -38,7 +38,7 @@ export const descriptionHTML = (desc?: DescriptionDetails): string => {
       = ${color.totalQuantity || 0} PCS
     </div>
   `).join('')}
-`};
+`;};
 
 export const formatTextToLines = (text?: string): string => {
   if (!text) return '';
